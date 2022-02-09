@@ -9,5 +9,6 @@
 
 // プリコンパイルするヘッダーをここに追加します
 #include "framework.h"
+#include "DxLib.h"
 
 #endif //PCH_H
