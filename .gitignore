@@ -3,3 +3,8 @@
 ___*.*
 */___/*
 ___/*
+
+# VSProject
+vsproject/game2d/.vs/*
+vsproject/game2d/**/x64/*
+vsproject/game2d/**/Debug/*
