@@ -38,12 +38,12 @@ namespace game2d
 		static std::map<std::type_index, ObjectType> m_objectTypes;
 	protected:
 		// Œ^Œp³î•ñ‚Ì’Ç‰Á (Œp³‚È‚µ)
-		static void add(const std::type_index& _index)
+		static bool add(const std::type_index& _index)
 		{
-			m_objectTypes.try_emplace(_index, ObjectType(_index));
+			return m_objectTypes.try_emplace(_index, ObjectType(_index)).second;
 		}
 		// Œ^Œp³î•ñ‚Ì’Ç‰Á (Œp³‚ ‚è)
-		static void add(const std::type_index& _index, const std::type_index& _parent)
+		static bool add(const std::type_index& _index, const std::type_index& _parent)
 		{
 			auto ret0 = m_objectTypes.try_emplace(_index, ObjectType(_index));
 			if (ret0.first != m_objectTypes.end())
@@ -55,27 +55,32 @@ namespace game2d
 			{
 				ret1.first->second.addChild(_index);
 			}
+			return ret0.second;
 		}
 	public:
 		// Œ^Œp³î•ñ‚Ì“o˜^ (Œp³‚È‚µ)
 		template<typename Self>
-		static void add()
+		static bool add()
 		{
-			add(typeid(Self));
+			return add(typeid(Self));
 		}
 		// Œ^Œp³î•ñ‚Ì“o˜^ (Œp³‚ ‚è)
 		template<typename Self, typename Parent0>
-		static void add()
+		static bool add()
 		{
-			add<Self>();
-			add(typeid(Self), typeid(Parent0));
+			bool tmp = false;
+			tmp |= add<Self>();
+			tmp |= add(typeid(Self), typeid(Parent0));
+			return tmp;
 		}
 		// Œ^Œp³î•ñ‚Ì“o˜^ (‘½dŒp³)
 		template<typename Self, typename Parent0, typename Parent1, typename ...Parents>
-		static void add()
+		static bool add()
 		{
-			add<Self, Parent0>();
-			add<Self, Parent1, Parents...>();
+			bool tmp = false;
+			tmp |= add<Self, Parent0>();
+			tmp |= add<Self, Parent1, Parents...>();
+			return tmp;
 		}
 
 		// Œ^Œp³î•ñ‚Ìæ“¾
