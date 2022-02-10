@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "MathVector.h"
+#include "BaseObject.h"
 #include <cmath>
 namespace game2d
 {
 	MathVector::MathVector(float _x, float _y)
 		:x(_x), y(_y)
 	{
+		ObjectType::add<MathVector,BaseObject>();
 	}
 	MathVector::~MathVector()
 	{
