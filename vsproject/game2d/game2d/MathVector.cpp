@@ -4,10 +4,10 @@
 #include <cmath>
 namespace game2d
 {
+	bool MathVector::___ = ObjectType::add<MathVector, BaseObject>();
 	MathVector::MathVector(float _x, float _y)
 		:x(_x), y(_y)
 	{
-		ObjectType::add<MathVector,BaseObject>();
 	}
 	MathVector::~MathVector()
 	{

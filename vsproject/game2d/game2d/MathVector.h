@@ -1,8 +1,12 @@
 #pragma once
+#include "BaseObject.h"
 namespace game2d
 {
 	class MathVector : public BaseObject
 	{
+	private:
+		// ObjectType“o˜^—p‰¼•Ï”
+		static bool ___;
 	public:
 		float x;
 		float y;
