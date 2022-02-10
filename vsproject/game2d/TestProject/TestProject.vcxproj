@@ -148,11 +148,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathVector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\game2d\game2d.vcxproj">
       <Project>{c9e0c442-2fcb-451f-b84a-485d2633dabe}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MathVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
