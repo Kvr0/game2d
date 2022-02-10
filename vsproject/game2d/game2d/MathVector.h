@@ -1,7 +1,7 @@
 #pragma once
 namespace game2d
 {
-	class MathVector
+	class MathVector : public BaseObject
 	{
 	public:
 		float x;
