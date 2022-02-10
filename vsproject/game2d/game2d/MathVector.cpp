@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "MathVector.h"
 #include <cmath>
 namespace game2d

@@ -11,4 +11,9 @@
 #include "framework.h"
 #include "DxLib.h"
 
+#include <typeinfo>
+#include <typeindex>
+#include <set>
+#include <map>
+
 #endif //PCH_H
