@@ -15,5 +15,6 @@
 #include <typeindex>
 #include <set>
 #include <map>
+#include <string>
 
 #endif //PCH_H
