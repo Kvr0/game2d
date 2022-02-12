@@ -46,6 +46,19 @@ namespace game2d
 			return at(_pos);
 		}
 
+		// ”äŠr
+		template<size_t N1, size_t M1>
+		constexpr bool operator==(const s4Matrix<T, N1, M1>& _rhs) const
+		{
+			if (N != N1 || M != M1) return false;
+			return data == _rhs.data;
+		}
+		template<size_t N1, size_t M1>
+		constexpr bool operator!=(const s4Matrix<T, N1, M1>& _rhs) const
+		{
+			return !(*this == _rhs);
+		}
+
 		// s—ñ‚Ì‘å‚«‚³
 		constexpr s4Matrix<size_t, 2, 1> size() const noexcept
 		{

@@ -8,6 +8,9 @@ namespace game2d
 {
 	template<typename T, size_t N, size_t M, std::enable_if_t<N == M, std::nullptr_t> = nullptr> class __MatrixDet;
 
+	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr> class s4ColumnMathVector;
+	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr> class s4RowMathVector;
+
 
 	template<typename T, size_t N, size_t M, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
 	class s4MathMatrix : public s4Matrix<T, N, M>
@@ -20,7 +23,7 @@ namespace game2d
 		using s4Matrix<T, N, M>::data;
 
 		// ‰ÁZ
-		s4MathMatrix& add(const s4MathMatrix& _rhs)
+		constexpr s4MathMatrix& add(const s4MathMatrix& _rhs)
 		{
 			for (size_t i = 0; i < N; i++)
 			{
@@ -31,15 +34,58 @@ namespace game2d
 			}
 			return *this;
 		}
+		constexpr s4MathMatrix& operator+=(const s4MathMatrix& _rhs)
+		{
+			return add(_rhs);
+		}
+		constexpr s4MathMatrix operator+(const s4MathMatrix& _rhs) const
+		{
+			s4MathMatrix tmp = *this;
+			tmp.add(_rhs);
+			return tmp;
+		}
+
+		// Œ¸Z
+		constexpr s4MathMatrix& sub(const s4MathMatrix& _rhs)
+		{
+			for (size_t i = 0; i < N; i++)
+			{
+				for (size_t j = 0; j < M; j++)
+				{
+					at({ i,j }) -= _rhs.at({ i,j });
+				}
+			}
+			return *this;
+		}
+		constexpr s4MathMatrix& operator-=(const s4MathMatrix& _rhs)
+		{
+			return sub(_rhs);
+		}
+		constexpr s4MathMatrix operator-(const s4MathMatrix& _rhs) const
+		{
+			s4MathMatrix tmp = *this;
+			tmp.sub(_rhs);
+			return tmp;
+		}
 
 		// ’è”æZ
-		s4MathMatrix& coe(const T& _rhs)
+		constexpr s4MathMatrix& coe_mul(const T& _rhs)
 		{
 			for (auto& v : data)
 			{
 				v *= _rhs;
 			}
 			return *this;
+		}
+		constexpr s4MathMatrix& operator*=(const T& _rhs)
+		{
+			return coe_mul(_rhs);
+		}
+		constexpr s4MathMatrix operator*(const T& _rhs) const
+		{
+			s4MathMatrix tmp = *this;
+			tmp.coe_mul(_rhs);
+			return tmp;
 		}
 
 		// ’è”œZ
@@ -51,22 +97,19 @@ namespace game2d
 			}
 			return *this;
 		}
-
-		// Œ¸Z
-		s4MathMatrix& sub(const s4MathMatrix& _rhs)
+		constexpr s4MathMatrix& operator/=(const T& _rhs)
 		{
-			for (size_t i = 0; i < N; i++)
-			{
-				for (size_t j = 0; j < M; j++)
-				{
-					at({ i,j }) -= _rhs.at({ i,j });
-				}
-			}
-			return *this;
+			return coe_mul(_rhs);
+		}
+		constexpr s4MathMatrix operator/(const T& _rhs) const
+		{
+			s4MathMatrix tmp = *this;
+			tmp.coe_div(_rhs);
+			return tmp;
 		}
 
 		// æZ
-		// A<W,H> * B<H,R>
+		// A<N,M> * B<M,R>
 		template<size_t R>
 		s4MathMatrix<T, N, R> mul(const s4MathMatrix<T, M, R>& _rhs) const
 		{
@@ -83,6 +126,11 @@ namespace game2d
 				}
 			}
 			return tmp;
+		}
+		template<size_t R>
+		constexpr s4MathMatrix<T, N, R> operator*(const s4MathMatrix<T, M, R>& _rhs) const
+		{
+			return mul(_rhs);
 		}
 
 		// ¬s—ñ®
@@ -174,9 +222,16 @@ namespace game2d
 			}
 			return tmp;
 		}
-
 	};
 
+	// ’è”æZ
+	template<typename T, size_t N, size_t M, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
+	constexpr s4MathMatrix<T, N, M> operator*(const T& _lhs, const s4MathMatrix<T, N, M>& _rhs)
+	{
+		return _rhs * _lhs;
+	}
+
+	// s—ñ®ŒvZ
 	template<typename T, size_t N, size_t M, std::enable_if_t<N == M, std::nullptr_t>>
 	class __MatrixDet
 	{
@@ -202,7 +257,7 @@ namespace game2d
 	};
 
 	// sƒxƒNƒgƒ‹
-	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
+	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t>>
 	class s4ColumnMathVector : public s4Matrix<T, 1, S>
 	{
 	public:
@@ -234,7 +289,7 @@ namespace game2d
 	};
 
 	// —ñƒxƒNƒgƒ‹
-	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
+	template<typename T, size_t S, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t>>
 	class s4RowMathVector : public s4Matrix<T, S, 1>
 	{
 	public:
