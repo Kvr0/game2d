@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "s4DxLib.h"
 #include "s4String.h"
+#include "s4BaseObject.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) 
 {
