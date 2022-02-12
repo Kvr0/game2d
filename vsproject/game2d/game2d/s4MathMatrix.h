@@ -6,10 +6,10 @@
 #include "DxLib.h"
 namespace game2d
 {
-	template<typename T, size_t N, size_t M> class MatrixDet;
+	template<typename T, size_t N, size_t M, std::enable_if_t<N == M, std::nullptr_t> = nullptr> class __MatrixDet;
 
 
-	template<typename T, size_t N, size_t M>
+	template<typename T, size_t N, size_t M, std::enable_if_t<std::is_arithmetic_v<T>, std::nullptr_t> = nullptr>
 	class s4MathMatrix : public s4Matrix<T, N, M>
 	{
 	private:
@@ -79,12 +79,8 @@ namespace game2d
 
 		// 逆行列
 
-		// 固有値
-
-		// 固有ベクトル
-
 		// 余因子
-		s4MathMatrix<T, N - 1, M - 1> adj(size_t _i, size_t _j) const
+		constexpr s4MathMatrix<T, N - 1, M - 1> adj(size_t _i, size_t _j) const
 		{
 			s4MathMatrix<T, N - 1, M - 1> tmp;
 
@@ -106,12 +102,27 @@ namespace game2d
 		}
 
 		// 行列式
-		T det() const
+		constexpr T det() const
 		{
+			static_assert(N == M, "game2d::s4MathMatrix::det: This matrix must be a square matrix.");
 			return __MatrixDet<T,N,M>()(*this);
 		}
 
 		// 転置行列
+		constexpr s4MathMatrix<T, M, N> trans() const
+		{
+			s4MathMatrix<T,M,N> tmp;
+
+			for (size_t i = 0; i < N; i++)
+			{
+				for (size_t j = 0; j < M; j++)
+				{
+					tmp.at({ j,i }) = at({i,j});
+				}
+			}
+
+			return tmp;
+		}
 
 		// ゼロ
 		static constexpr s4MathMatrix zero()
@@ -132,7 +143,7 @@ namespace game2d
 
 	};
 
-	template<typename T, size_t N, size_t M>
+	template<typename T, size_t N, size_t M, std::enable_if_t<N == M, std::nullptr_t>>
 	class __MatrixDet
 	{
 	public:
