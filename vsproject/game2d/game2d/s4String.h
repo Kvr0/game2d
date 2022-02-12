@@ -29,5 +29,4 @@ game2d::s4String operator""_s(const game2d::tchar* _str, std::size_t _count)
 	return game2d::s4String(_str, _count);
 }
 
-
 #endif // !_GAME2D_S4STRING_H_
