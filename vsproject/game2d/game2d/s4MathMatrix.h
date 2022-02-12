@@ -89,7 +89,7 @@ namespace game2d
 		}
 
 		// ’è”œZ
-		s4MathMatrix& coe_div(const T& _rhs)
+		constexpr s4MathMatrix& coe_div(const T& _rhs)
 		{
 			for (auto& v : data)
 			{
@@ -111,7 +111,7 @@ namespace game2d
 		// æZ
 		// A<N,M> * B<M,R>
 		template<size_t R>
-		s4MathMatrix<T, N, R> mul(const s4MathMatrix<T, M, R>& _rhs) const
+		constexpr s4MathMatrix<T, N, R> mul(const s4MathMatrix<T, M, R>& _rhs) const
 		{
 			s4MathMatrix<T, N, R> tmp;
 
