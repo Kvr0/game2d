@@ -1,21 +1,22 @@
 #pragma once
-#ifndef _GAME2D_DXWINDOW_H_
-#define _GAME2D_DXWINDOW_H_
+#ifndef _GAME2D_S4DXLIB_H_
+#define _GAME2D_S4DXLIB_H_
 #include "DxLib.h"
+#include "s4String.h"
 namespace game2d
 {
 	class s4DxLib
 	{
 	public:
 		// DxLibÇÃèâä˙âªèàóù
-		static bool init(int _width, int _height, const TCHAR* _title)
+		static bool init(int _width, int _height, const tstring& _title)
 		{
 			SetOutApplicationLogValidFlag(FALSE);
 			SetDoubleStartValidFlag(TRUE);
 
 			ChangeWindowMode(TRUE);
 			SetGraphMode(_width, _height, 32, 60);
-			SetWindowText(_title);
+			SetWindowText(_title.c_str());
 
 			if (DxLib_Init() < 0)return false;
 
@@ -37,4 +38,4 @@ namespace game2d
 		}
 	};
 }
-#endif // !_GAME2D_DXWINDOW_H_
+#endif // !_GAME2D_S4DXLIB_H_
