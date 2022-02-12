@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _GAME2D_S4STRING_H_
 #define _GAME2D_S4STRING_H_
+#include "s4BaseObject.h"
 #include <string>
 namespace game2d
 {
@@ -12,8 +13,10 @@ namespace game2d
 	using tchar = char;
 #endif // UNICODE
 
-	class s4String : public tstring
+	class s4String : public s4BaseObject, public tstring
 	{
+	private:
+		static inline bool ___ = s4BaseObject::apply<s4String, s4BaseObject, tstring>();
 	public:
 		using tstring::tstring;
 		s4String(const tstring& _str)
