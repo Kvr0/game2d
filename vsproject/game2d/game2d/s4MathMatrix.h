@@ -3,7 +3,7 @@
 #define _GAME2D_S4MATHMATRIX_H_
 #include "s4BaseObject.h"
 #include "s4Matrix.h"
-#include "DxLib.h"
+#include <cmath>
 namespace game2d
 {
 	template<typename T, size_t N, size_t M, std::enable_if_t<N == M, std::nullptr_t> = nullptr> class __MatrixDet;
@@ -221,6 +221,15 @@ namespace game2d
 				tmp.at({ i,i }) = 1;
 			}
 			return tmp;
+		}
+
+		// s—ñ‚Ì‘å‚«‚³
+		constexpr T magnitude() const
+		{
+			T tmp = 0;
+			if (!std::is_floating_point<T>::value) return tmp;
+			for (auto& v : data) tmp += v * v;
+			return std::sqrt(tmp);
 		}
 	};
 
