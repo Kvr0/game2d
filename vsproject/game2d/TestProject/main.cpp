@@ -11,14 +11,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 	if (!game2d::s4DxLib::init(vec0.at(0), vec0.at(1), L"Window"_s))return -1;
 
-	auto mat0 = game2d::s4MathMatrix<int, 2, 3>(
+	auto mat0 = game2d::s4MathMatrix<int, 2, 2>(
 		{
-			1,2,3,
-			4,5,6
+			-3,2,
+			-1,0
 		});
 
-	auto a = mat0.det();
-	auto mat1 = mat0.trans();
+	auto unit = mat0.identity();
+	auto adj_mat = mat0.adj_mat();
+	auto inv = mat0.inverse();
+
+	auto mat1 = mat0.mul(inv);
+
 
 
 	while (game2d::s4DxLib::loop());

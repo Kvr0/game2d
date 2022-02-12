@@ -152,7 +152,7 @@ namespace game2d
 	template<typename T, typename ...Args, size_t S = sizeof...(Args) + 1>
 	s4RowVector<T, S> make_s4RowVector(T _arg0, Args ...args)
 	{
-		return s4Vector<T, S>({ _arg0, args... });
+		return s4RowVector<T, S>({ _arg0, args... });
 	}
 	template<typename T, typename ...Args, size_t S = sizeof...(Args) + 1>
 	s4Vector<T, S> make_s4Vector(T _arg0, Args ...args)
