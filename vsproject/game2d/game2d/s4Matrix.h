@@ -9,33 +9,32 @@ namespace game2d
 	template<typename T, size_t S> class s4ColumnVector;
 	template<typename T, size_t S> class s4RowVector;
 
-	template<typename T, size_t W, size_t H>
+	template<typename T, size_t N, size_t M>
 	class s4Matrix : public s4BaseObject
 	{
 	private:
-		static inline bool ___ = s4BaseObject::apply<s4Matrix, s4BaseObject>();
+		static inline bool ___ = s4BaseObject::apply<s4Matrix<T, N, M>, s4BaseObject>();
 	public:
 		using value_type = T;
-		static inline const size_t width = W;
-		static inline const size_t height = H;
+		static inline const size_t width = M;
+		static inline const size_t height = N;
 	public:
-		std::array<value_type, W* H> data;
+		std::array<value_type, width * height> data;
 	public:
 
 		template<typename ...T>
 		s4Matrix(const T& ...ts)
 			:data{static_cast<const value_type&>(ts)...} {}
-		s4Matrix()
-			:s4Matrix({}) {}
+		s4Matrix() :data{} {}
 
 		// 取得
 		constexpr value_type& at(const s4Matrix<size_t, 2, 1>& _pos)
 		{
-			return data.at(_pos.data.at(0) + width * _pos.data.at(1));
+			return data.at(width * _pos.data.at(0) + _pos.data.at(1));
 		}
 		constexpr const value_type& at(const s4Matrix<size_t, 2, 1>& _pos) const
 		{
-			return data.at(_pos.data.at(0) + width * _pos.data.at(1));
+			return data.at(width * _pos.data.at(0) + _pos.data.at(1));
 		}
 
 		constexpr value_type& operator[](const s4Matrix<size_t, 2, 1>& _pos)
@@ -45,6 +44,19 @@ namespace game2d
 		constexpr const value_type& operator[](const s4Matrix<size_t, 2, 1>& _pos) const
 		{
 			return at(_pos);
+		}
+
+		// 比較
+		template<size_t N1, size_t M1>
+		constexpr bool operator==(const s4Matrix<T, N1, M1>& _rhs) const
+		{
+			if (N != N1 || M != M1) return false;
+			return data == _rhs.data;
+		}
+		template<size_t N1, size_t M1>
+		constexpr bool operator!=(const s4Matrix<T, N1, M1>& _rhs) const
+		{
+			return !(*this == _rhs);
 		}
 
 		// 行列の大きさ
@@ -78,23 +90,24 @@ namespace game2d
 
 	// 行ベクトル
 	template<typename T, size_t S>
-	class s4ColumnVector : public s4Matrix<T, S, 1>
+	class s4ColumnVector : public s4Matrix<T, 1, S>
 	{
 	public:
 		using value_type = T;
 	private:
-		static inline bool ___ = s4BaseObject::apply<s4Matrix<value_type, S, 1>>();
+		static inline bool ___ = s4BaseObject::apply<s4ColumnVector<T, S>,s4Matrix<value_type, 1, S>>();
 	public:
-		using s4Matrix<value_type, S, 1>::s4Matrix;
+		using s4Matrix<value_type, 1, S>::s4Matrix;
+		using s4Matrix<value_type, 1, S>::at;
 
 		// 取得
 		constexpr value_type& at(size_t _idx)
 		{
-			return s4Matrix<value_type, S, 1>::at({ _idx, 0 });
+			return at({ 0, _idx });
 		}
 		constexpr const value_type& at(size_t _idx) const
 		{
-			return s4Matrix<value_type, S, 1>::at({ _idx, 0 });
+			return at({ 0, _idx });
 		}
 
 		constexpr value_type& operator[](size_t _idx)
@@ -109,23 +122,24 @@ namespace game2d
 
 	// 列ベクトル
 	template<typename T, size_t S>
-	class s4RowVector : public s4Matrix<T, 1, S>
+	class s4RowVector : public s4Matrix<T, S ,1>
 	{
 	public:
 		using value_type = T;
 	private:
-		static inline bool ___ = s4BaseObject::apply<s4Matrix<value_type, 1, S>>();
+		static inline bool ___ = s4BaseObject::apply<s4RowVector<T, S>, s4Matrix<value_type, S, 1>>();
 	public:
-		using s4Matrix<value_type, 1, S>::s4Matrix;
+		using s4Matrix<value_type, S, 1>::s4Matrix;
+		using s4Matrix<value_type, 1, S>::at;
 
 		// 取得
 		constexpr value_type& at(size_t _idx)
 		{
-			return s4Matrix<value_type, 1, S>::at({ _idx, 0 });
+			return at({ _idx, 0 });
 		}
 		constexpr const value_type& at(size_t _idx) const
 		{
-			return s4Matrix<value_type, 1, S>::at({ _idx, 0 });
+			return at({ _idx, 0 });
 		}
 
 		constexpr value_type& operator[](size_t _idx)
@@ -151,7 +165,7 @@ namespace game2d
 	template<typename T, typename ...Args, size_t S = sizeof...(Args) + 1>
 	s4RowVector<T, S> make_s4RowVector(T _arg0, Args ...args)
 	{
-		return s4Vector<T, S>({ _arg0, args... });
+		return s4RowVector<T, S>({ _arg0, args... });
 	}
 	template<typename T, typename ...Args, size_t S = sizeof...(Args) + 1>
 	s4Vector<T, S> make_s4Vector(T _arg0, Args ...args)
