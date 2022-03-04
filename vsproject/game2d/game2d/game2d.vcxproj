@@ -168,6 +168,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="game2d.h" />
+    <ClInclude Include="s4Color.h" />
+    <ClInclude Include="s4DxRender.h" />
     <ClInclude Include="s4MathMatrix.h" />
     <ClInclude Include="s4BaseObject.h" />
     <ClInclude Include="s4DxLib.h" />
