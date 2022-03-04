@@ -274,8 +274,8 @@ namespace game2d
 	private:
 		static inline bool ___ = s4BaseObject::apply<s4ColumnMathVector<T, S>, s4Matrix<value_type, 1, S>>();
 	public:
-		using s4ColumnMathVector<value_type, 1, S>::s4Matrix;
-		using s4ColumnMathVector<value_type, 1, S>::at;
+		using s4Matrix<value_type, 1, S>::s4Matrix;
+		using s4Matrix<value_type, 1, S>::at;
 
 		// Žæ“¾
 		constexpr value_type& at(size_t _idx)
@@ -306,8 +306,8 @@ namespace game2d
 	private:
 		static inline bool ___ = s4BaseObject::apply<s4RowMathVector<T, S>, s4Matrix<value_type, S, 1>>();
 	public:
-		using s4RowMathVector<value_type, S, 1>::s4Matrix;
-		using s4RowMathVector<value_type, 1, S>::at;
+		using s4Matrix<value_type, S, 1>::s4Matrix;
+		using s4Matrix<value_type, S, 1>::at;
 
 		// Žæ“¾
 		constexpr value_type& at(size_t _idx)
