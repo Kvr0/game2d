@@ -2,7 +2,7 @@
 name: 機能要望
 about: 機能の要望はここ
 title: "[Request]"
-labels: ''
+labels: request
 assignees: Kvr0
 
 ---
@@ -14,3 +14,5 @@ assignees: Kvr0
 ### 依存する機能
 
 ### 既存の機能への影響
+
+

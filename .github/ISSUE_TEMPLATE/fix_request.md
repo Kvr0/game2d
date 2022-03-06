@@ -2,7 +2,7 @@
 name: 修正要望
 about: 修正の要望はここ
 title: "[Fix]"
-labels: ''
+labels: fix
 assignees: Kvr0
 
 ---
@@ -14,3 +14,5 @@ assignees: Kvr0
 ### 関係する機能
 
 ### 既存の機能への影響
+
+
