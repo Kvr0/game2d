@@ -2,6 +2,7 @@
 #ifndef _GAME2D_S4COLOR_H_
 #define _GAME2D_S4COLOR_H_
 #include "s4BaseObject.h"
+#include "s4DxLib.h"
 #include <variant>
 #include <array>
 
@@ -13,8 +14,9 @@ namespace game2d
 		static inline bool ___ = s4BaseObject::apply<s4ColorBase, s4BaseObject>();
 	public:
 		virtual unsigned int getUInt() const = 0;
-		virtual std::array<unsigned char, 3> getUChar() const = 0;
-		virtual std::array<float, 3> getFloat() const = 0;
+		virtual std::array<unsigned char, 4> getUChar() const = 0;
+		virtual DxLib::COLOR_U8 getCOLOR_U8() const = 0;
+		virtual std::array<float, 4> getFloat() const = 0;
 	};
 
 	class s4Color : public s4ColorBase
@@ -23,33 +25,39 @@ namespace game2d
 		static inline bool ___ = s4BaseObject::apply<s4Color, s4ColorBase>();
 	public:
 		unsigned value;
-		s4Color(unsigned _col)
-			:value(_col)
+		unsigned char alpha;
+		s4Color(unsigned _col, unsigned char _alpha = 255u)
+			:value(_col), alpha(_alpha)
 		{}
-		s4Color(unsigned char _r, unsigned char _g, unsigned char _b)
-			:value(((unsigned)_r << 16) + ((unsigned)_g << 8) + ((unsigned)_b))
+		s4Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a = 255)
+			:value(((unsigned)_r << 16) + ((unsigned)_g << 8) + ((unsigned)_b)), alpha(_a)
 		{
 		}
-		s4Color(const std::array<unsigned char, 3>& _col)
-			:s4Color(_col[0],_col[1],_col[2])
+		s4Color(const std::array<unsigned char, 4>& _col)
+			:s4Color(_col[0], _col[1], _col[2], _col[3])
 		{
 		}
 		s4Color(const s4ColorBase& _col)
-			:value(_col.getUInt())
+			:s4Color(_col.getUInt())
 		{}
 
 		virtual unsigned int getUInt() const
 		{
 			return value;
 		}
-		virtual std::array<unsigned char, 3> getUChar() const
+		virtual std::array<unsigned char, 4> getUChar() const
 		{
-			return { static_cast<unsigned char>((value >> 16) & 255),static_cast<unsigned char>((value >> 8) & 255),static_cast<unsigned char>(value & 255) };
+			return { static_cast<unsigned char>((value >> 16) & 255),static_cast<unsigned char>((value >> 8) & 255),static_cast<unsigned char>(value & 255), alpha };
 		}
-		virtual std::array<float, 3> getFloat() const
+		virtual DxLib::COLOR_U8 getCOLOR_U8() const
 		{
 			auto tmp = getUChar();
-			return { (float)tmp[0] / 255.0f,(float)tmp[1] / 255.0f,(float)tmp[1] / 255.0f };
+			return { tmp[0],tmp[1],tmp[2],tmp[3] };
+		}
+		virtual std::array<float, 4> getFloat() const
+		{
+			auto tmp = getUChar();
+			return { (float)tmp[0] / 255.0f,(float)tmp[1] / 255.0f,(float)tmp[2] / 255.0f,(float)tmp[3] / 255.0f };
 		}
 	};
 
@@ -58,12 +66,12 @@ namespace game2d
 	private:
 		static inline bool ___ = s4BaseObject::apply<s4ColorF, s4ColorBase>();
 	public:
-		std::array<float, 3> value;
-		s4ColorF(float _r, float _g, float _b)
-			:value{_r, _g, _b}
+		std::array<float, 4> value;
+		s4ColorF(float _r, float _g, float _b, float _a = 1.0f)
+			:value{_r, _g, _b, _a}
 		{}
-		s4ColorF(const std::array<float, 3>& _col)
-			:s4ColorF(_col[0], _col[1], _col[2])
+		s4ColorF(const std::array<float, 4>& _col)
+			:s4ColorF(_col[0], _col[1], _col[2], _col[3])
 		{}
 		s4ColorF(const s4ColorBase& _col)
 			:s4ColorF(_col.getFloat())
@@ -73,11 +81,16 @@ namespace game2d
 		{
 			return s4Color(this->getUChar()).getUInt();
 		}
-		virtual std::array<unsigned char, 3> getUChar() const
+		virtual std::array<unsigned char, 4> getUChar() const
 		{
-			return { (unsigned char)(value[0] * 255.0f),(unsigned char)(value[1] * 255.0f),(unsigned char)(value[2] * 255.0f) };
+			return { (unsigned char)(value[0] * 255.0f),(unsigned char)(value[1] * 255.0f),(unsigned char)(value[2] * 255.0f),(unsigned char)(value[3] * 255.0f) };
 		}
-		virtual std::array<float, 3> getFloat() const
+		virtual DxLib::COLOR_U8 getCOLOR_U8() const
+		{
+			auto tmp = getUChar();
+			return { tmp[0],tmp[1],tmp[2],tmp[3] };
+		}
+		virtual std::array<float, 4> getFloat() const
 		{
 			return value;
 		}
@@ -88,12 +101,12 @@ namespace game2d
 	private:
 		static inline bool ___ = s4BaseObject::apply<s4ColorHSV, s4ColorBase>();
 	public:
-		std::array<float, 3> value;
-		s4ColorHSV(float _h, float _s, float _v)
-			:value{ _h, _s, _v }
+		std::array<float, 4> value;
+		s4ColorHSV(float _h, float _s, float _v, float _a = 1.0f)
+			:value{ _h, _s, _v, _a }
 		{}
-		s4ColorHSV(const std::array<float, 3>& _hsv)
-			:s4ColorHSV(_hsv[0], _hsv[1], _hsv[2])
+		s4ColorHSV(const std::array<float, 4>& _hsv)
+			:s4ColorHSV(_hsv[0], _hsv[1], _hsv[2], _hsv[3])
 		{}
 		s4ColorHSV(const s4ColorBase& _col)
 			:value{}
@@ -124,17 +137,23 @@ namespace game2d
 			if (max_v != 0.0f)
 				value[1] /= max_v;
 			value[2] = max_v;
+			value[3] = tmp[3];
 		}
 
 		virtual unsigned int getUInt() const
 		{
 			return s4ColorF(this->getFloat()).getUInt();
 		}
-		virtual std::array<unsigned char, 3> getUChar() const
+		virtual std::array<unsigned char, 4> getUChar() const
 		{
 			return s4ColorF(this->getFloat()).getUChar();
 		}
-		virtual std::array<float, 3> getFloat() const
+		virtual DxLib::COLOR_U8 getCOLOR_U8() const
+		{
+			auto tmp = getUChar();
+			return { tmp[0],tmp[1],tmp[2],tmp[3] };
+		}
+		virtual std::array<float, 4> getFloat() const
 		{
 			float r = value[2];
 			float g = value[2];
@@ -170,7 +189,7 @@ namespace game2d
 					break;
 				}
 			}
-			return { r,g,b };
+			return { r,g,b,value[3]};
 		}
 	};
 }

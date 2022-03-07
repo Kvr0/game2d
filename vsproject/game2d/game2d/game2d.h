@@ -8,4 +8,5 @@
 #include "s4Color.h"
 #include "s4DxRender.h"
 #include "s4DxResource.h"
+#include "s4DxPrimitive.h"
 #endif // !_GAME2D_H_
