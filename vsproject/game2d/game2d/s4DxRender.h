@@ -2,9 +2,12 @@
 #ifndef _GAME2D_S4DXRENDER_H_
 #define _GAME2D_S4DXRENDER_H_
 #include "s4DxLib.h"
+#include "s4Matrix.h"
 #include "s4MathMatrix.h"
 #include "s4Color.h"
 #include "s4String.h"
+#include "s4DxResource.h"
+#include <list>
 namespace game2d
 {
 	// ç¿ïWå^
@@ -137,6 +140,121 @@ namespace game2d
 		static s4SizeF getSize(const s4String& _str, bool _vertical = false, int _fonthandle = DX_DEFAULT_FONT_HANDLE)
 		{
 			return getSize(_str, strlenDx(_str.c_str()), _vertical, _fonthandle);
+		}
+	};
+
+	// âÊëúï`âÊ
+	class s4DxRenderGraph
+	{
+	public:
+		static void graph(const s4Position& _p, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawGraph(_p[0], _p[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void extend(const s4Position& _p0, const s4Position& _p1, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawExtendGraph(_p0[0], _p0[1], _p1[0], _p1[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void rota(const s4Position& _p, const s4Position& _c, const s4DxGraph& _graph, const s4Vector<double, 2>& _rate = { 1.0, 1.0 }, double _angle = 0.0, const s4Vector<bool, 2>& _reverse = { false, false }, bool _trans = true)
+		{
+			DxLib::DrawRotaGraph3(_p[0], _p[1], _c[0], _c[1], _rate[0], _rate[1], _angle, _graph.getHandle(), _trans ? TRUE : FALSE, _reverse[0] ? TRUE : FALSE, _reverse[1] ? TRUE : FALSE);
+		}
+		static void modi(const s4Position& _p0, const s4Position& _p1, const s4Position& _p2, const s4Position& _p3, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawModiGraph(_p0[0], _p0[1], _p1[0], _p1[1], _p2[0], _p2[1], _p3[0], _p3[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void reverse(const s4Position& _p, const s4DxGraph& _graph, const s4Vector<bool, 2>& _reverse = { false, false }, bool _trans = true)
+		{
+			DxLib::DrawReverseGraph(_p[0], _p[1], _graph.getHandle(), _trans ? TRUE : FALSE, _reverse[0] ? TRUE : FALSE, _reverse[1] ? TRUE : FALSE);
+		}
+	};
+	class s4DxRenderGraphF
+	{
+	public:
+		static void graph(const s4PositionF& _p, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawGraphF(_p[0], _p[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void extend(const s4PositionF& _p0, const s4PositionF& _p1, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawExtendGraphF(_p0[0], _p0[1], _p1[0], _p1[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void rota(const s4PositionF& _p, const s4PositionF& _c, const s4DxGraph& _graph, const s4Vector<double, 2>& _rate = { 1.0, 1.0 }, double _angle = 0.0, const s4Vector<bool, 2>& _reverse = { false, false }, bool _trans = true)
+		{
+			DxLib::DrawRotaGraph3F(_p[0], _p[1], _c[0], _c[1], _rate[0], _rate[1], _angle, _graph.getHandle(), _trans ? TRUE : FALSE, _reverse[0] ? TRUE : FALSE, _reverse[1] ? TRUE : FALSE);
+		}
+		static void modi(const s4PositionF& _p0, const s4PositionF& _p1, const s4PositionF& _p2, const s4PositionF& _p3, const s4DxGraph& _graph, bool _trans = true)
+		{
+			DxLib::DrawModiGraphF(_p0[0], _p0[1], _p1[0], _p1[1], _p2[0], _p2[1], _p3[0], _p3[1], _graph.getHandle(), _trans ? TRUE : FALSE);
+		}
+		static void reverse(const s4PositionF& _p, const s4DxGraph& _graph, const s4Vector<bool, 2>& _reverse = { false, false }, bool _trans = true)
+		{
+			DxLib::DrawReverseGraphF(_p[0], _p[1], _graph.getHandle(), _trans ? TRUE : FALSE, _reverse[0] ? TRUE : FALSE, _reverse[1] ? TRUE : FALSE);
+		}
+	};
+
+	// BlendMode
+	class s4DxBlendMode
+	{
+	public:
+		enum class Mode : int
+		{
+			NoBlend = DX_BLENDMODE_NOBLEND,
+			Alpha = DX_BLENDMODE_ALPHA,
+			Add = DX_BLENDMODE_ADD,
+			Sub = DX_BLENDMODE_SUB,
+			Mul = DX_BLENDMODE_MUL,
+			Sub2 = DX_BLENDMODE_SUB2,
+			Xor = DX_BLENDMODE_XOR,
+			DestColor = DX_BLENDMODE_DESTCOLOR,
+			InvDestColor = DX_BLENDMODE_INVDESTCOLOR,
+			InvSrc = DX_BLENDMODE_INVSRC,
+			MulA = DX_BLENDMODE_MULA,
+			AlphaX4 = DX_BLENDMODE_ALPHA_X4,
+			AddX4 = DX_BLENDMODE_ADD_X4,
+			SrcColor = DX_BLENDMODE_SRCCOLOR,
+			HalfAdd = DX_BLENDMODE_HALF_ADD,
+			Sub1 = DX_BLENDMODE_SUB1,
+			PmaAlpha = DX_BLENDMODE_PMA_ALPHA,
+			PmaAdd = DX_BLENDMODE_PMA_ADD,
+			PmaSub = DX_BLENDMODE_PMA_SUB,
+			PmaInvSrc = DX_BLENDMODE_PMA_INVSRC,
+			PmaAlphaX4 = DX_BLENDMODE_PMA_ALPHA_X4,
+			PmaAddX4 = DX_BLENDMODE_PMA_ADD_X4,
+			Live2dZero = DX_BLENDMODE_LIVE2D_ZERO,
+			Live2dNormal = DX_BLENDMODE_LIVE2D_NORMAL,
+			Live2dAdd = DX_BLENDMODE_LIVE2D_ADD,
+			Live2dMult = DX_BLENDMODE_LIVE2D_MULT,
+			Live2dMask = DX_BLENDMODE_LIVE2D_MASK
+		};
+	private:
+		static inline std::list<std::pair<Mode,int>> __mode = {};
+	public:
+		// éÊìæ
+		static std::pair<Mode, int> get()
+		{
+			int mode, param;
+			DxLib::GetDrawBlendMode(&mode, &param);
+			return { (Mode)mode, param };
+		}
+		// ê›íË
+		static void set(Mode _mode, int _param)
+		{
+			DxLib::SetDrawBlendMode((int)_mode, _param);
+		}
+		// ï€ë∂
+		static void push()
+		{
+			__mode.push_back(get());
+		}
+		// ì«Ç›çûÇ›
+		static void pop()
+		{
+			if (!__mode.empty())
+			{
+				set(__mode.back().first, __mode.back().second);
+				__mode.pop_back();
+			}
 		}
 	};
 }

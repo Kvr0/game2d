@@ -7,18 +7,27 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 	if (!game2d::s4DxLib::init(vec0.at(0), vec0.at(1),game2d::toString("Test"))) return -1;
 
-	float h = 0.0f;
+	std::vector<game2d::s4DxVertex> vertex;
+	vertex.push_back(game2d::s4DxVertex({ 10.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+	vertex.push_back(game2d::s4DxVertex({ 110.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+	vertex.push_back(game2d::s4DxVertex({ 110.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+	vertex.push_back(game2d::s4DxVertex({ 10.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+
+	auto prim = game2d::s4DxPrimitive(vertex, {0,1,2,0,2,3}, game2d::s4DxPrimitive::Type::TriangleList);
+
+	float hue = 0.0f;
 
 	while (game2d::s4DxLib::loop())
 	{
-		h += 1.0f / 360.0f;
-		if (h > 1.0f)h -= 1.0f;
+		hue += 1.0f / 360.0f;
+		if (hue > 1.0f) hue -= 1.0f;
 
-		auto h1 = h + 0.5f;
-		if (h1 > 1.0f) h1 -= 1.0f;
+		prim.vertex[0].dif = game2d::s4ColorHSV(hue, 1.0f, 1.0f).getCOLOR_U8();
+		prim.vertex[1].dif = game2d::s4ColorHSV(hue + 0.25f + (hue + 0.25f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		prim.vertex[2].dif = game2d::s4ColorHSV(hue + 0.5f + (hue + 0.5f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		prim.vertex[3].dif = game2d::s4ColorHSV(hue + 0.75f + (hue + 0.75f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
 
-		game2d::s4DxRenderShape::box({ 0,0 }, { 640,480 }, game2d::s4ColorHSV(h1, 1.0f, 1.0f), true);
-		game2d::s4DxRenderString::string({10,10}, game2d::toString("Hello World", 100, 0.01), game2d::s4ColorHSV(h, 1.0f, 1.0f));
+		prim.render();
 	}
 
 	game2d::s4DxLib::end();
