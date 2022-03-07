@@ -7,6 +7,7 @@
 #include "s4Color.h"
 #include "s4String.h"
 #include "s4DxResource.h"
+#include <list>
 namespace game2d
 {
 	// ç¿ïWå^
@@ -189,6 +190,71 @@ namespace game2d
 		static void reverse(const s4PositionF& _p, const s4DxGraph& _graph, const s4Vector<bool, 2>& _reverse = { false, false }, bool _trans = true)
 		{
 			DxLib::DrawReverseGraphF(_p[0], _p[1], _graph.getHandle(), _trans ? TRUE : FALSE, _reverse[0] ? TRUE : FALSE, _reverse[1] ? TRUE : FALSE);
+		}
+	};
+
+	// BlendMode
+	class s4DxBlendMode
+	{
+	public:
+		enum class Mode : int
+		{
+			NoBlend = DX_BLENDMODE_NOBLEND,
+			Alpha = DX_BLENDMODE_ALPHA,
+			Add = DX_BLENDMODE_ADD,
+			Sub = DX_BLENDMODE_SUB,
+			Mul = DX_BLENDMODE_MUL,
+			Sub2 = DX_BLENDMODE_SUB2,
+			Xor = DX_BLENDMODE_XOR,
+			DestColor = DX_BLENDMODE_DESTCOLOR,
+			InvDestColor = DX_BLENDMODE_INVDESTCOLOR,
+			InvSrc = DX_BLENDMODE_INVSRC,
+			MulA = DX_BLENDMODE_MULA,
+			AlphaX4 = DX_BLENDMODE_ALPHA_X4,
+			AddX4 = DX_BLENDMODE_ADD_X4,
+			SrcColor = DX_BLENDMODE_SRCCOLOR,
+			HalfAdd = DX_BLENDMODE_HALF_ADD,
+			Sub1 = DX_BLENDMODE_SUB1,
+			PmaAlpha = DX_BLENDMODE_PMA_ALPHA,
+			PmaAdd = DX_BLENDMODE_PMA_ADD,
+			PmaSub = DX_BLENDMODE_PMA_SUB,
+			PmaInvSrc = DX_BLENDMODE_PMA_INVSRC,
+			PmaAlphaX4 = DX_BLENDMODE_PMA_ALPHA_X4,
+			PmaAddX4 = DX_BLENDMODE_PMA_ADD_X4,
+			Live2dZero = DX_BLENDMODE_LIVE2D_ZERO,
+			Live2dNormal = DX_BLENDMODE_LIVE2D_NORMAL,
+			Live2dAdd = DX_BLENDMODE_LIVE2D_ADD,
+			Live2dMult = DX_BLENDMODE_LIVE2D_MULT,
+			Live2dMask = DX_BLENDMODE_LIVE2D_MASK
+		};
+	private:
+		static inline std::list<std::pair<Mode,int>> __mode = {};
+	public:
+		// éÊìæ
+		static std::pair<Mode, int> get()
+		{
+			int mode, param;
+			DxLib::GetDrawBlendMode(&mode, &param);
+			return { (Mode)mode, param };
+		}
+		// ê›íË
+		static void set(Mode _mode, int _param)
+		{
+			DxLib::SetDrawBlendMode((int)_mode, _param);
+		}
+		// ï€ë∂
+		static void push()
+		{
+			__mode.push_back(get());
+		}
+		// ì«Ç›çûÇ›
+		static void pop()
+		{
+			if (!__mode.empty())
+			{
+				set(__mode.back().first, __mode.back().second);
+				__mode.pop_back();
+			}
 		}
 	};
 }
