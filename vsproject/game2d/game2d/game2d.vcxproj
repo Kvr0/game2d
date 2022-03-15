@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="game2d.h" />
     <ClInclude Include="s4Color.h" />
+    <ClInclude Include="s4DxInput.h" />
     <ClInclude Include="s4DxPrimitive.h" />
     <ClInclude Include="s4DxResource.h" />
     <ClInclude Include="s4DxRender.h" />
