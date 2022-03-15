@@ -9,4 +9,5 @@
 #include "s4DxRender.h"
 #include "s4DxResource.h"
 #include "s4DxPrimitive.h"
+#include "s4DxInput.h"
 #endif // !_GAME2D_H_
