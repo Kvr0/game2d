@@ -21,11 +21,11 @@ namespace game2d
 				~Releaser() { TrashCan::release(true); }
 			};
 		private:
-			static inline std::list<std::set<std::pair<s4BaseObject*, unsigned char>>> __objs;
+			static inline std::list<std::set<std::pair<s4BaseObject*, bool>>> __objs;
 			static inline Releaser __releaser;
 		public:
-			static void add(s4BaseObject* _obj, bool _array) { if (__objs.empty()) push(); __objs.back().insert({_obj, _array ? 1u : 0u}); }
-			static void remove(s4BaseObject* _obj, bool _array) { if (__objs.empty()) return; __objs.back().erase({ _obj, _array ? 1u : 0u }); }
+			static void add(s4BaseObject* _obj, bool _array) { if (__objs.empty()) push(); __objs.back().insert({_obj, _array}); }
+			static void remove(s4BaseObject* _obj, bool _array) { if (__objs.empty()) return; __objs.back().erase({ _obj, _array}); }
 			static void push() { __objs.push_back({}); }
 			static void pop() { release(false); }
 			static void release(bool _all = false)
@@ -36,18 +36,9 @@ namespace game2d
 				{
 					auto tmp = *rit;
 					last.erase((++rit).base());
-					if (tmp.second == 2 && !_all) return;
-					switch (tmp.second)
-					{
-					case 0:
-						delete tmp.first;
-						break;
-					case 1:
-						delete[] tmp.first;
-						break;
-					default:
-						break;
-					}
+					if(tmp.second) delete[] tmp.first;
+					else delete tmp.first;
+					if (last.empty()) break;
 				}
 				__objs.pop_back();
 				if (_all) release(true);
