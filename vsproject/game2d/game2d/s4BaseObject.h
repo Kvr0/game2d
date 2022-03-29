@@ -2,12 +2,57 @@
 #ifndef _GAME2D_S4BASEOBJECT_H_
 #define _GAME2D_S4BASEOBJECT_H_
 #include <map>
+#include <list>
 #include <set>
 #include <typeindex>
 namespace game2d
 {
 	class s4BaseObject
 	{
+	private:
+		// リソース解放機能
+		class TrashCan
+		{
+		private:
+			class Releaser
+			{
+			public:
+				Releaser() {}
+				~Releaser() { TrashCan::release(true); }
+			};
+		private:
+			static inline std::list<std::set<std::pair<s4BaseObject*, unsigned char>>> __objs;
+			static inline Releaser __releaser;
+		public:
+			static void add(s4BaseObject* _obj, bool _array) { if (__objs.empty()) push(); __objs.back().insert({_obj, _array ? 1u : 0u}); }
+			static void remove(s4BaseObject* _obj, bool _array) { if (__objs.empty()) return; __objs.back().erase({ _obj, _array ? 1u : 0u }); }
+			static void push() { __objs.push_back({}); }
+			static void pop() { release(false); }
+			static void release(bool _all = false)
+			{
+				if (__objs.empty()) return;
+				auto& last = __objs.back();
+				for (auto rit = last.rbegin(); rit != last.rend();)
+				{
+					auto tmp = *rit;
+					last.erase((++rit).base());
+					if (tmp.second == 2 && !_all) return;
+					switch (tmp.second)
+					{
+					case 0:
+						delete tmp.first;
+						break;
+					case 1:
+						delete[] tmp.first;
+						break;
+					default:
+						break;
+					}
+				}
+				__objs.pop_back();
+				if (_all) release(true);
+			}
+		};
 	public:
 		s4BaseObject() {}
 		virtual ~s4BaseObject() {}
@@ -80,6 +125,25 @@ namespace game2d
 		{
 			if (_parent == nullptr) return false;
 			return isParentOf(typeid(*_parent), typeid(Child));
+		}
+
+		// New/Delete
+	public:
+		static void* operator new(std::size_t _sz)
+		{
+			auto tmp = ::operator new(_sz, std::nothrow); TrashCan::add((s4BaseObject*)tmp, false); return tmp;
+		}
+		static void* operator new[](std::size_t _sz)
+		{
+			auto tmp = ::operator new(_sz, std::nothrow); TrashCan::add((s4BaseObject*)tmp, true); return tmp;
+		}
+		static void operator delete(void* _p)
+		{
+			TrashCan::remove((s4BaseObject*)_p, false); ::operator delete(_p, std::nothrow);
+		}
+		static void operator delete[](void* _p)
+		{
+			TrashCan::remove((s4BaseObject*)_p, true); ::operator delete(_p, std::nothrow);
 		}
 	};
 }

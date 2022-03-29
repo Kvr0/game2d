@@ -13,7 +13,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 	vertex.push_back(game2d::s4DxVertex({ 110.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
 	vertex.push_back(game2d::s4DxVertex({ 10.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
 
-	auto prim = game2d::s4DxPrimitive(vertex, {0,1,2,0,2,3}, game2d::s4DxPrimitive::Type::TriangleList);
+	auto prim = new game2d::s4DxPrimitive(vertex, {0,1,2,0,2,3}, game2d::s4DxPrimitive::Type::TriangleList);
 
 	float hue = 0.0f;
 
@@ -25,25 +25,26 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, 
 
 		// Size
 		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_W]) size *= 1.05f;
+
 		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_S]) size *= 0.95f;
 
 		// Pos
 		auto mposf = game2d::s4PositionF((float)game2d::s4DxMouse::pos()[0], (float)game2d::s4DxMouse::pos()[1]);
-		prim.vertex[0].pos = { mposf[0] - size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
-		prim.vertex[1].pos = { mposf[0] + size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
-		prim.vertex[2].pos = { mposf[0] + size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
-		prim.vertex[3].pos = { mposf[0] - size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
+		prim->vertex[0].pos = { mposf[0] - size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
+		prim->vertex[1].pos = { mposf[0] + size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
+		prim->vertex[2].pos = { mposf[0] + size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
+		prim->vertex[3].pos = { mposf[0] - size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
 
 		// Color
 		hue += 1.0f / 360.0f;
 		if (hue > 1.0f) hue -= 1.0f;
 
-		prim.vertex[0].dif = game2d::s4ColorHSV(hue, 1.0f, 1.0f).getCOLOR_U8();
-		prim.vertex[1].dif = game2d::s4ColorHSV(hue + 0.25f + (hue + 0.25f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
-		prim.vertex[2].dif = game2d::s4ColorHSV(hue + 0.5f + (hue + 0.5f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
-		prim.vertex[3].dif = game2d::s4ColorHSV(hue + 0.75f + (hue + 0.75f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		prim->vertex[0].dif = game2d::s4ColorHSV(hue, 1.0f, 1.0f).getCOLOR_U8();
+		prim->vertex[1].dif = game2d::s4ColorHSV(hue + 0.25f + (hue + 0.25f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		prim->vertex[2].dif = game2d::s4ColorHSV(hue + 0.5f + (hue + 0.5f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		prim->vertex[3].dif = game2d::s4ColorHSV(hue + 0.75f + (hue + 0.75f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
 
-		prim.render();
+		prim->render();
 	}
 
 	game2d::s4DxLib::end();
