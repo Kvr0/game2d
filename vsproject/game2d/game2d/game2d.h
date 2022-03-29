@@ -10,5 +10,6 @@
 #include "s4DxResource.h"
 #include "s4DxPrimitive.h"
 #include "s4DxInput.h"
+#include "s4EventTrigger.h"
 #include "s4SceneControl.h"
 #endif // !_GAME2D_H_
