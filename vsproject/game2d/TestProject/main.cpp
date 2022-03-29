@@ -1,51 +1,77 @@
 #include <Windows.h>
 #include "game2d.h"
 
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) 
+class GlobalValue
 {
-	auto vec0 = game2d::make_s4Vector(640, 480);
+public:
+	game2d::s4DxPrimitive prim;
+	float hue;
+	float size;
+	GlobalValue()
+		:prim({}, {}, game2d::s4DxPrimitive::Type::LineList)
+	{
+		std::vector<game2d::s4DxVertex> vertex;
+		vertex.push_back(game2d::s4DxVertex({ 10.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+		vertex.push_back(game2d::s4DxVertex({ 110.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+		vertex.push_back(game2d::s4DxVertex({ 110.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+		vertex.push_back(game2d::s4DxVertex({ 10.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
 
-	if (!game2d::s4DxLib::init(vec0.at(0), vec0.at(1),game2d::toString("Test"))) return -1;
+		prim = game2d::s4DxPrimitive(vertex, { 0,1,2,0,2,3 }, game2d::s4DxPrimitive::Type::TriangleList);
 
-	std::vector<game2d::s4DxVertex> vertex;
-	vertex.push_back(game2d::s4DxVertex({ 10.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
-	vertex.push_back(game2d::s4DxVertex({ 110.0f, 10.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
-	vertex.push_back(game2d::s4DxVertex({ 110.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
-	vertex.push_back(game2d::s4DxVertex({ 10.0f, 110.0f }, game2d::s4ColorF(1.0f, 1.0f, 1.0f)));
+		hue = 0.0f;
+		size = 100.0f;
+	}
+};
 
-	auto prim = new game2d::s4DxPrimitive(vertex, {0,1,2,0,2,3}, game2d::s4DxPrimitive::Type::TriangleList);
-
-	float hue = 0.0f;
-
-	float size = 100.0f;
-
-	while (game2d::s4DxLib::loop())
+class PrimScene : public game2d::s4Scene<GlobalValue>
+{
+public:
+	virtual void execute(GlobalValue& _gvalue)
 	{
 		game2d::s4DxInput::update();
 
 		// Size
-		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_W]) size *= 1.05f;
+		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_W]) _gvalue.size *= 1.05f;
 
-		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_S]) size *= 0.95f;
+		if (game2d::s4DxKeyboard::keys()[KEY_INPUT_S]) _gvalue.size *= 0.95f;
 
 		// Pos
 		auto mposf = game2d::s4PositionF((float)game2d::s4DxMouse::pos()[0], (float)game2d::s4DxMouse::pos()[1]);
-		prim->vertex[0].pos = { mposf[0] - size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
-		prim->vertex[1].pos = { mposf[0] + size / 2.0f,mposf[1] - size / 2.0f, 0.0f };
-		prim->vertex[2].pos = { mposf[0] + size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
-		prim->vertex[3].pos = { mposf[0] - size / 2.0f,mposf[1] + size / 2.0f, 0.0f };
+		_gvalue.prim.vertex[0].pos = { mposf[0] - _gvalue.size / 2.0f,mposf[1] - _gvalue.size / 2.0f, 0.0f };
+		_gvalue.prim.vertex[1].pos = { mposf[0] + _gvalue.size / 2.0f,mposf[1] - _gvalue.size / 2.0f, 0.0f };
+		_gvalue.prim.vertex[2].pos = { mposf[0] + _gvalue.size / 2.0f,mposf[1] + _gvalue.size / 2.0f, 0.0f };
+		_gvalue.prim.vertex[3].pos = { mposf[0] - _gvalue.size / 2.0f,mposf[1] + _gvalue.size / 2.0f, 0.0f };
 
 		// Color
-		hue += 1.0f / 360.0f;
-		if (hue > 1.0f) hue -= 1.0f;
+		_gvalue.hue += 1.0f / 360.0f;
+		if (_gvalue.hue > 1.0f) _gvalue.hue -= 1.0f;
 
-		prim->vertex[0].dif = game2d::s4ColorHSV(hue, 1.0f, 1.0f).getCOLOR_U8();
-		prim->vertex[1].dif = game2d::s4ColorHSV(hue + 0.25f + (hue + 0.25f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
-		prim->vertex[2].dif = game2d::s4ColorHSV(hue + 0.5f + (hue + 0.5f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
-		prim->vertex[3].dif = game2d::s4ColorHSV(hue + 0.75f + (hue + 0.75f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		_gvalue.prim.vertex[0].dif = game2d::s4ColorHSV(_gvalue.hue, 1.0f, 1.0f).getCOLOR_U8();
+		_gvalue.prim.vertex[1].dif = game2d::s4ColorHSV(_gvalue.hue + 0.25f + (_gvalue.hue + 0.25f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		_gvalue.prim.vertex[2].dif = game2d::s4ColorHSV(_gvalue.hue + 0.5f + (_gvalue.hue + 0.5f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
+		_gvalue.prim.vertex[3].dif = game2d::s4ColorHSV(_gvalue.hue + 0.75f + (_gvalue.hue + 0.75f > 1.0f ? -1.0f : 0.0f), 1.0f, 1.0f).getCOLOR_U8();
 
-		prim->render();
+		_gvalue.prim.render();
 	}
+};
+
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd) 
+{
+	game2d::s4SceneController<GlobalValue> controller;
+
+	GlobalValue gvalue;
+	auto sid = controller.add(new PrimScene());
+
+	auto vec0 = game2d::make_s4Vector(640, 480);
+
+	if (!game2d::s4DxLib::init(vec0.at(0), vec0.at(1),game2d::toString("Test"))) return -1;
+
+	while (game2d::s4DxLib::loop())
+	{
+		controller.execute(sid, gvalue);
+	}
+
+	game2d::s4BaseObject::TrashCan::release(true);
 
 	game2d::s4DxLib::end();
 
