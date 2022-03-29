@@ -118,6 +118,8 @@ namespace game2d
 		{
 			remove_handler(*this, _ehandler);
 		}
+		const std::set<s4EventHandler*>& getHandler() const { return __handler[(s4EventHandler*)this]; }
+		std::set<s4EventHandler*>& getHandler() { return __handler[this]; }
 
 		virtual void receiveEvent(const s4Event& _e, s4EventHandler* _root = nullptr)
 		{
