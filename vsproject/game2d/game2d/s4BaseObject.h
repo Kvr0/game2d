@@ -9,7 +9,7 @@ namespace game2d
 {
 	class s4BaseObject
 	{
-	private:
+	public:
 		// リソース解放機能
 		class TrashCan
 		{
