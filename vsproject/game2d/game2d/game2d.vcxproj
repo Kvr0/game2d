@@ -180,6 +180,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="s4Matrix.h" />
+    <ClInclude Include="s4SceneControl.h" />
     <ClInclude Include="s4String.h" />
   </ItemGroup>
   <ItemGroup>
