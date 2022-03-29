@@ -173,6 +173,7 @@
     <ClInclude Include="s4DxPrimitive.h" />
     <ClInclude Include="s4DxResource.h" />
     <ClInclude Include="s4DxRender.h" />
+    <ClInclude Include="s4EventTrigger.h" />
     <ClInclude Include="s4MathMatrix.h" />
     <ClInclude Include="s4BaseObject.h" />
     <ClInclude Include="s4DxLib.h" />
