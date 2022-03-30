@@ -73,32 +73,50 @@ namespace game2d
 	private:
 		static inline bool ___ = s4BaseObject::apply<s4EventHandler, s4BaseObject>();
 	private:
-		static inline std::map<s4EventHandler*, std::set<s4EventHandler*>> __handler;
+		static inline std::map<s4EventHandler*, std::pair<std::set<s4EventHandler*>,std::list<s4Event*>>> __handler;
 		// ハンドラーの追加
-		static void add_handler(s4EventHandler& _mehandler, s4EventHandler& _ehandler)
+		static void add_handler(s4EventHandler& _self, s4EventHandler& _ehandler)
 		{
-			__handler[&_mehandler].insert(&_ehandler);
+			__handler[&_self].first.insert(&_ehandler);
 		}
-		static void add_handler(s4EventHandler& _mehandler)
+		static void add_handler(s4EventHandler& _self)
 		{
-			__handler.try_emplace(&_mehandler);
+			__handler.try_emplace(&_self);
 		}
 		// ハンドラーの削除
-		static void remove_handler(s4EventHandler& _mehandler, s4EventHandler& _ehandler)
+		static void remove_handler(s4EventHandler& _self, s4EventHandler& _ehandler)
 		{
-			__handler[&_mehandler].erase(&_ehandler);
+			__handler[&_self].first.erase(&_ehandler);
 		}
-		static void remove_handler(s4EventHandler& _mehandler)
+		static void remove_handler(s4EventHandler& _self)
 		{
-			__handler.erase(&_mehandler);
+			__handler.erase(&_self);
 		}
 		// イベントの受け取り
-		static void receive_event(s4EventHandler& _mehandler, const s4Event& _e, s4EventHandler* _root)
+		static void receive_event(s4EventHandler& _self, const s4Event& _e, s4EventHandler* _root)
 		{
-			for (auto h : __handler[&_mehandler])
+			for (auto h : __handler[&_self].first)
 			{
-				if (h != _root) h->receiveEvent(_e, _root);
+				if (h != _root)
+				{
+					if(auto it = __handler.find(h);it != __handler.end()) h->receiveEvent(_e, _root);
+				}
 			}
+		}
+		// スタックの取得
+		static const std::list<s4Event*>& get_stack(s4EventHandler& _self)
+		{
+			return __handler[&_self].second;
+		}
+		// スタックへの追加
+		static void add_stack(s4EventHandler& _self, s4Event* _e)
+		{
+			__handler[&_self].second.push_back(_e);
+		}
+		// スタックへの削除
+		static void clear_stack(s4EventHandler& _self)
+		{
+			__handler[&_self].second.clear();
 		}
 	public:
 		s4EventHandler()
@@ -118,12 +136,25 @@ namespace game2d
 		{
 			remove_handler(*this, _ehandler);
 		}
-		const std::set<s4EventHandler*>& getHandler() const { return __handler[(s4EventHandler*)this]; }
-		std::set<s4EventHandler*>& getHandler() { return __handler[this]; }
+		const std::set<s4EventHandler*>& getHandler() const { return __handler[(s4EventHandler*)this].first; }
+		std::set<s4EventHandler*>& getHandler() { return __handler[this].first; }
 
-		virtual void receiveEvent(const s4Event& _e, s4EventHandler* _root = nullptr)
+		virtual void receiveEvent(s4Event& _e, s4EventHandler* _root = nullptr)
 		{
 			receive_event(*this, _e, _root ? _root : this);
+		}
+
+		virtual const std::list<s4Event*>& getStack()
+		{
+			return get_stack(*this);
+		}
+		virtual void addStack(s4Event* _e)
+		{
+			add_stack(*this, _e);
+		}
+		virtual void clearStack()
+		{
+			clear_stack(*this);
 		}
 	};
 }
